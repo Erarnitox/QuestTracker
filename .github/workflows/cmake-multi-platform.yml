@@ -64,10 +64,14 @@ jobs:
       id: package
       run: |
         mkdir -p artifacts
+        mkdir -p artifacts/lin
+        mkdir -p artifacts/win
+        mkdir -p artifacts/res
         if [ "$RUNNER_OS" == "Linux" ]; then
-          cp build/bin/* artifacts/lin/
+          cp build/bin/todo_list_app artifacts/lin/questTracker.elf
+          cp build/res/* artifacts/res/
         elif [ "$RUNNER_OS" == "Windows" ]; then
-          cp build/bin/* artifacts/win/
+          cp build/bin/todo_list_app artifacts/win/questTracker.exe
         fi
 
     - name: Upload build artifacts
