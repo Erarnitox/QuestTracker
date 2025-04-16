@@ -62,6 +62,7 @@ jobs:
     
     - name: Package binary
       id: package
+      shell: bash
       run: |
         mkdir -p artifacts
         mkdir -p artifacts/lin
