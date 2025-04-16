@@ -17,26 +17,17 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         build_type: [Release]
-        c_compiler: [gcc, clang, cl]
+        c_compiler: [clang]
         include:
           - os: windows-latest
-            c_compiler: clang
             cpp_compiler: clang++
           - os: ubuntu-latest
-            c_compiler: clang
-            cpp_compiler: clang++
-          - os: ubuntu-latest
-            c_compiler: clang
             cpp_compiler: clang++
         exclude:
           - os: windows-latest
             c_compiler: gcc
-          - os: windows-latest
-            c_compiler: cl
           - os: ubuntu-latest
             c_compiler: cl
-          - os: ubuntu-latest
-            c_compiler: gcc
 
     steps:
     - uses: actions/checkout@v4
@@ -46,30 +37,69 @@ jobs:
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-    - name: Install Dependencies
-      shell: bash
+        
+    - name: Install Dependencies (Linux)
+      if: runner.os == 'Linux'
       run: |
-        sudo apt-get install build-essential git make \
+        sudo apt update
+        sudo apt install -y build-essential git make \
         pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
         libaudio-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
         libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
         libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
         libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev
+
     - name: Configure CMake
       run: >
         cmake --preset default
 
     - name: Build
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }}
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ctest
+      run: ctest --output-on-failure
     
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.6.2
+    - name: Package binary
+      id: package
+      run: |
+        mkdir -p artifacts
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          cp build/bin/* artifacts/lin/
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+          cp build/bin/* artifacts/win/
+        fi
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
       with:
-        name: Build
-        path: build
-        if-no-files-found: error
+        name: questtracker-${{ runner.os }}
+        path: artifacts/
+        retention-days: 7
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: downloaded-artifacts
+
+    - name: Display downloaded content
+      run: ls -R downloaded-artifacts
+
+    - name: Create GitHub Release
+      uses: ncipollo/release-action@v1.14.0
+      with:
+        artifacts: "downloaded-artifacts/**"
+        tag: v${{ github.run_number }}
+        name: "QuestTracker v${{ github.run_number }}"
+        body: |
+          Automated release generated from commit `${{ github.sha }}`.
+        token: ${{ secrets.GITHUB_TOKEN }}
+        generateReleaseNotes: true
+          
           
