@@ -67,7 +67,7 @@ add_subdirectory(include)
 add_subdirectory(src bin)
 
 # -------- Copy Resources ---
-file(COPY "res" DESTINATION "${CMAKE_BINARY_DIR}")
+file(COPY "res/" DESTINATION "${CMAKE_BINARY_DIR}/bin")
 
 # -------- Testing ----------
 if(BUILD_TESTING)

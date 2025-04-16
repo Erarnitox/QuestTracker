@@ -70,7 +70,7 @@ jobs:
         mkdir -p artifacts/res
         if [ "$RUNNER_OS" == "Linux" ]; then
           cp build/bin/todo_list_app artifacts/lin/questTracker.elf
-          cp build/res/* artifacts/res/
+          cp build/bin/LeroyLettering.ttf artifacts/res/
         elif [ "$RUNNER_OS" == "Windows" ]; then
           cp build/bin/todo_list_app artifacts/win/questTracker.exe
         fi

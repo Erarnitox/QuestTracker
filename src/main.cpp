@@ -11,8 +11,10 @@
 #include "imgui.h"
 #include "backends/imgui_impl_sdl3.h"
 #include "backends/imgui_impl_opengl3.h"
+
 #include <algorithm>
 #include <cstring>
+#include <filesystem>
 
 //-----------------------------------------
 //
@@ -290,8 +292,12 @@ int main() {
     ImGui_ImplSDL3_InitForOpenGL(window, gl_context);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    //TODO: styling
-    ImFont* erarnitox_font{ io.Fonts->AddFontFromFileTTF("../res/LeroyLettering.ttf", 20) };
+    const auto FONT_PATH { "LeroyLettering.ttf" };
+    bool use_font{ false };
+    if(std::filesystem::exists(FONT_PATH) || std::filesystem::is_regular_file(FONT_PATH)) {
+        use_font = true;
+    }
+    ImFont* erarnitox_font{ use_font ? io.Fonts->AddFontFromFileTTF(FONT_PATH, 20) : nullptr };
     set_erarnitox_style();
 
     AppState appState;
@@ -313,7 +319,9 @@ int main() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
-        ImGui::PushFont(erarnitox_font);
+        
+        if(use_font)
+            ImGui::PushFont(erarnitox_font);
 
         // Draw our window
         ImGui::SetNextWindowPos({0, 0});
@@ -332,7 +340,9 @@ int main() {
         }
         ImGui::EndChild();
         ImGui::End();
-        ImGui::PopFont();
+        
+        if(use_font)
+            ImGui::PopFont();
 
         // Rendering
         ImGui::Render();
