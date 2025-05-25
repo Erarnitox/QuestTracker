@@ -1,6 +1,7 @@
 #include "AppState.hpp"
 
 #include "SDL3/SDL.h"
+#include "SDL3/SDL_hints.h"
 #include "SDL3/SDL_opengl.h"
 #include "SDL3/SDL_error.h"
 #include "SDL3/SDL_events.h"
@@ -20,7 +21,34 @@
 //
 //-----------------------------------------
 void set_erarnitox_style() {
-    ImVec4* colors = ImGui::GetStyle().Colors;
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.WindowRounding    = 5.0f;
+    style.ChildRounding     = 5.0f;
+    style.FrameRounding     = 3.0f;
+    style.GrabRounding      = 2.0f;
+    style.PopupRounding     = 3.0f;
+    style.ScrollbarRounding = 3.0f;
+    style.TabRounding       = 3.0f;
+
+    style.FramePadding      = ImVec2(6, 4);
+    style.ItemSpacing       = ImVec2(10, 6);
+    style.ItemInnerSpacing  = ImVec2(6, 4);
+    style.WindowPadding     = ImVec2(10, 10);
+    style.IndentSpacing     = 20.0f;
+
+    // Style adjustments
+    style.CellPadding       = ImVec2(6.00f, 6.00f);
+    style.ScrollbarSize     = 16;
+    style.GrabMinSize       = 12;
+
+    // Border sizes
+    style.WindowBorderSize  = 0.8f;
+    style.ChildBorderSize   = 0.8f;
+    style.PopupBorderSize   = 0.8f;
+    style.FrameBorderSize   = 0.8f;
+    style.TabBorderSize     = 0.8f;
+
+    ImVec4* colors = style.Colors;
 
     // Convert brand colors to ImVec4
     const ImVec4 main_bg(0.11f, 0.114f, 0.133f, 1.00f);        // #1C1D22
@@ -34,7 +62,6 @@ void set_erarnitox_style() {
     // Core colors
     colors[ImGuiCol_Text]                   = main_text;
     colors[ImGuiCol_TextDisabled]           = sec_text;
-    colors[ImGuiCol_WindowBg]               = main_bg;
     colors[ImGuiCol_ChildBg]                = main_bg;
     colors[ImGuiCol_PopupBg]                = sec_bg;
     colors[ImGuiCol_Border]                 = sec_text;
@@ -42,6 +69,24 @@ void set_erarnitox_style() {
     colors[ImGuiCol_FrameBg]                = sec_bg;
     colors[ImGuiCol_FrameBgHovered]         = highlight;
     colors[ImGuiCol_FrameBgActive]          = form_bg;
+
+    // Modern Style base
+    colors[ImGuiCol_WindowBg]           = ImVec4(0.13f, 0.14f, 0.17f, 1.00f);
+    colors[ImGuiCol_Header]             = ImVec4(0.20f, 0.22f, 0.27f, 1.00f);
+    colors[ImGuiCol_HeaderHovered]      = ImVec4(0.28f, 0.30f, 0.36f, 1.00f);
+    colors[ImGuiCol_HeaderActive]       = ImVec4(0.18f, 0.19f, 0.22f, 1.00f);
+    colors[ImGuiCol_Button]             = ImVec4(0.20f, 0.22f, 0.27f, 1.00f);
+    colors[ImGuiCol_ButtonHovered]      = ImVec4(0.28f, 0.30f, 0.36f, 1.00f);
+    colors[ImGuiCol_ButtonActive]       = ImVec4(0.18f, 0.19f, 0.22f, 1.00f);
+    colors[ImGuiCol_FrameBg]            = ImVec4(0.20f, 0.22f, 0.27f, 1.00f);
+    colors[ImGuiCol_FrameBgHovered]     = ImVec4(0.28f, 0.30f, 0.36f, 1.00f);
+    colors[ImGuiCol_FrameBgActive]      = ImVec4(0.18f, 0.19f, 0.22f, 1.00f);
+    colors[ImGuiCol_Tab]                = ImVec4(0.15f, 0.16f, 0.19f, 1.00f);
+    colors[ImGuiCol_TabHovered]         = ImVec4(0.28f, 0.30f, 0.36f, 1.00f);
+    colors[ImGuiCol_TabActive]          = ImVec4(0.20f, 0.22f, 0.27f, 1.00f);
+    colors[ImGuiCol_TabUnfocused]       = ImVec4(0.13f, 0.14f, 0.17f, 1.00f);
+    colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.20f, 0.22f, 0.27f, 1.00f);
+
 
     // Interactive elements
     colors[ImGuiCol_TitleBg]                = sec_bg;
@@ -55,12 +100,6 @@ void set_erarnitox_style() {
     colors[ImGuiCol_CheckMark]              = white;
     colors[ImGuiCol_SliderGrab]             = form_bg;
     colors[ImGuiCol_SliderGrabActive]       = highlight;
-    colors[ImGuiCol_Button]                 = form_bg;
-    colors[ImGuiCol_ButtonHovered]          = highlight;
-    colors[ImGuiCol_ButtonActive]           = form_bg;
-    colors[ImGuiCol_Header]                 = form_bg;
-    colors[ImGuiCol_HeaderHovered]          = highlight;
-    colors[ImGuiCol_HeaderActive]           = form_bg;
 
     // Secondary UI elements
     colors[ImGuiCol_Separator]              = sec_text;
@@ -69,43 +108,11 @@ void set_erarnitox_style() {
     colors[ImGuiCol_ResizeGrip]             = sec_text;
     colors[ImGuiCol_ResizeGripHovered]      = highlight;
     colors[ImGuiCol_ResizeGripActive]       = form_bg;
-    colors[ImGuiCol_Tab]                    = sec_bg;
-    colors[ImGuiCol_TabHovered]             = highlight;
-    colors[ImGuiCol_TabActive]              = form_bg;
-    colors[ImGuiCol_TabUnfocused]           = sec_bg;
-    colors[ImGuiCol_TabUnfocusedActive]     = form_bg;
 
     // Special purpose
     colors[ImGuiCol_TextSelectedBg]         = highlight;
     colors[ImGuiCol_DragDropTarget]         = highlight;
     colors[ImGuiCol_NavHighlight]           = highlight;
-
-    // Style adjustments
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.WindowPadding     = ImVec2(12.00f, 12.00f);
-    style.FramePadding      = ImVec2(8.00f, 4.00f);
-    style.CellPadding       = ImVec2(6.00f, 6.00f);
-    style.ItemSpacing       = ImVec2(8.00f, 6.00f);
-    style.ItemInnerSpacing  = ImVec2(6.00f, 6.00f);
-    style.IndentSpacing     = 25;
-    style.ScrollbarSize     = 16;
-    style.GrabMinSize       = 12;
-
-    // Border sizes
-    style.WindowBorderSize  = 0.8f;
-    style.ChildBorderSize   = 0.8f;
-    style.PopupBorderSize   = 0.8f;
-    style.FrameBorderSize   = 0.8f;
-    style.TabBorderSize     = 0.8f;
-
-    // Rounding
-    style.WindowRounding    = 4.0f;
-    style.ChildRounding     = 4.0f;
-    style.FrameRounding     = 2.0f;
-    style.PopupRounding     = 4.0f;
-    style.ScrollbarRounding = 4.0f;
-    style.GrabRounding      = 2.0f;
-    style.TabRounding       = 4.0f;
 }
 
 //-----------------------------------------
@@ -279,6 +286,7 @@ int main() {
 
     // Create a window
     SDL_Window* window{ SDL_CreateWindow("Erarnitox's Quest Tracker", 800, 1000, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE)};
+
     SDL_GLContext gl_context{ SDL_GL_CreateContext(window) };
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1);
@@ -287,6 +295,7 @@ int main() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io{ ImGui::GetIO() };
+    io.IniFilename = nullptr;
 
     // Setup Backends
     ImGui_ImplSDL3_InitForOpenGL(window, gl_context);
@@ -297,7 +306,7 @@ int main() {
     if(std::filesystem::exists(FONT_PATH) || std::filesystem::is_regular_file(FONT_PATH)) {
         use_font = true;
     }
-    ImFont* erarnitox_font{ use_font ? io.Fonts->AddFontFromFileTTF(FONT_PATH, 20) : nullptr };
+    ImFont* erarnitox_font{ use_font ? io.Fonts->AddFontFromFileTTF(FONT_PATH, 16.0f) : nullptr };
     set_erarnitox_style();
 
     AppState appState;
