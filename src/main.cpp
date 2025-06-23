@@ -1,7 +1,5 @@
 #include "AppState.hpp"
 
-#include "SDL3/SDL.h"
-#include "SDL3/SDL_hints.h"
 #include "SDL3/SDL_opengl.h"
 #include "SDL3/SDL_error.h"
 #include "SDL3/SDL_events.h"
@@ -13,9 +11,11 @@
 #include "backends/imgui_impl_sdl3.h"
 #include "backends/imgui_impl_opengl3.h"
 
+
 #include <algorithm>
 #include <cstring>
 #include <filesystem>
+#include <print>
 
 //-----------------------------------------
 //
@@ -86,7 +86,6 @@ void set_erarnitox_style() {
     colors[ImGuiCol_TabActive]          = ImVec4(0.20f, 0.22f, 0.27f, 1.00f);
     colors[ImGuiCol_TabUnfocused]       = ImVec4(0.13f, 0.14f, 0.17f, 1.00f);
     colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.20f, 0.22f, 0.27f, 1.00f);
-
 
     // Interactive elements
     colors[ImGuiCol_TitleBg]                = sec_bg;
@@ -220,7 +219,7 @@ void ShowQuestTracker(AppState& appState) {
 
     ImGui::Separator();
     // Quest Overview
-    for(auto& quest : appState.quests) {
+    for(auto& quest : appState.quests.getTasks()) {
         ImGui::PushID(quest.m_id);
 
         // Quest header
@@ -249,8 +248,8 @@ void ShowQuestTracker(AppState& appState) {
             // Delete Button:
             ImGui::SameLine();
             if(ImGui::Button("Delete")) {
-                appState.quests.erase(
-                    std::ranges::remove_if(appState.quests, [&](const Task& task){
+                appState.quests.getTasks().erase(
+                    std::ranges::remove_if(appState.quests.getTasks(), [&](const Task& task){
                         return task.m_id == quest.m_id;
                     }).begin()
                 );
@@ -271,6 +270,7 @@ void ShowQuestTracker(AppState& appState) {
 //
 //-----------------------------------------
 int main() {
+
     // Setup SDL
     if(not SDL_Init(SDL_INIT_VIDEO)) {
         std::println("SDL_Init Error: {}", SDL_GetError());
@@ -310,6 +310,7 @@ int main() {
     set_erarnitox_style();
 
     AppState appState;
+    appState.nextQuestId = appState.quests.getTasks().back().m_id + 1;
 
     bool done{ false };
     while(not done) {

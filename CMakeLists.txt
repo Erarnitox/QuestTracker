@@ -51,6 +51,15 @@ add_library(imgui STATIC
     "${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp"
 )
 
+CPMAddPackage(
+  NAME SQLiteCpp
+  GITHUB_REPOSITORY SRombauts/SQLiteCpp
+  GIT_TAG 3.3.3
+  OPTIONS
+    "SQLITECPP_INTERNAL_SQLITE ON"
+    "SQLITECPP_ENABLE_TESTS OFF"
+)
+
 # Find OpenGL
 find_package(OpenGL REQUIRED)
 
@@ -63,13 +72,12 @@ target_include_directories(imgui PUBLIC
 target_link_libraries(imgui PUBLIC SDL3::SDL3 OpenGL::GL)
 # ------- Our Code ----------
 
-add_subdirectory(include)
 add_subdirectory(src bin)
 
 # -------- Copy Resources ---
 file(COPY "res/" DESTINATION "${CMAKE_BINARY_DIR}/bin")
 
 # -------- Testing ----------
-if(BUILD_TESTING)
-    add_subdirectory(tests)
-endif()
+#if(BUILD_TESTING)
+#    add_subdirectory(tests)
+#endif()

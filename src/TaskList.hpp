@@ -1,10 +1,9 @@
 #pragma once
 
-#include <print>
 #include <string>
-#include <memory>
-#include <list>
 #include <vector>
+
+#include <SQLiteCpp/SQLiteCpp.h>
 
 //-----------------------------------------
 //
@@ -30,9 +29,13 @@ struct Task {
 //-----------------------------------------
 //
 //-----------------------------------------
-class TaskList : public std::vector<Task> {
-public:
-    void addTask(const Task& task) {
-        this->push_back(task);
-    }
+class TaskList {
+  public:
+    explicit TaskList(const std::string& db_file = "quests.db");
+    ~TaskList();
+    void addTask(const Task& task); 
+    std::vector<Task>& getTasks() noexcept;
+  private:
+    SQLite::Database m_db;
+    std::vector<Task> m_tasks;
 };
