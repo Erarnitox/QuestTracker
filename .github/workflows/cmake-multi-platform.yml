@@ -19,8 +19,6 @@ jobs:
         build_type: [Release]
         c_compiler: [clang]
         include:
-          - os: windows-latest
-            cpp_compiler: clang++
           - os: ubuntu-latest
             cpp_compiler: clang++
         exclude:
@@ -28,6 +26,8 @@ jobs:
             c_compiler: gcc
           - os: ubuntu-latest
             c_compiler: cl
+          - os: windows-latest
+            cpp_compiler: clang++
 
     steps:
     - uses: actions/checkout@v4
