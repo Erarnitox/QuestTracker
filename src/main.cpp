@@ -11,7 +11,6 @@
 #include "backends/imgui_impl_sdl3.h"
 #include "backends/imgui_impl_opengl3.h"
 
-
 #include <algorithm>
 #include <cstring>
 #include <filesystem>
@@ -257,7 +256,6 @@ void ShowQuestTracker(AppState& appState) {
                 ImGui::PopID();
                 break;
             }
-
             ImGui::Unindent();
         }
 

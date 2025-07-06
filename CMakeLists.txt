@@ -78,6 +78,6 @@ add_subdirectory(src bin)
 file(COPY "res/" DESTINATION "${CMAKE_BINARY_DIR}/bin")
 
 # -------- Testing ----------
-#if(BUILD_TESTING)
-#    add_subdirectory(tests)
-#endif()
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()

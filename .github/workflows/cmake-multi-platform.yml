@@ -81,9 +81,18 @@ jobs:
         name: questtracker-${{ runner.os }}
         path: artifacts/
         retention-days: 7
+  test:
+    needs: build
+    runs_on: ubuntu-latest
+    steps:
+      - name: Run Ctest
+        shell: bash
+        run: |
+          cd build/tests
+          ctest --verbose
 
   release:
-    needs: build
+    needs: test 
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
