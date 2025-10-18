@@ -308,7 +308,7 @@ int main() {
     set_erarnitox_style();
 
     AppState appState;
-    appState.nextQuestId = appState.quests.getTasks().back().m_id + 1;
+    appState.nextQuestId = appState.quests.getTasks().empty() ? 1 : appState.quests.getTasks().back().m_id + 1;
 
     bool done{ false };
     while(not done) {
